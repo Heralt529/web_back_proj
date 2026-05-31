@@ -21,7 +21,6 @@ function init($request = array(), $urlconf = array()) {
   // вызываем процедуры их модулей, соответствующие методу HTTP-запроса.
   $q = isset($request['url']) ? $request['url'] : '';
   $method = isset($request['method']) ? $request['method'] : 'get';
-  
   foreach ($urlconf as $url => $r) {
     $matches = array();
     if ($url == '' || $url[0] != '/') {
@@ -29,30 +28,21 @@ function init($request = array(), $urlconf = array()) {
       if ($url != $q) {
         continue;
       }
-      // Для простого совпадения создаем пустой массив совпадений
-      $matches = array($q);
     }
     else {
       // Проверяем соответствие URL запроса регулярному выражению.
       if (!preg_match_all($url, $q, $matches, PREG_SET_ORDER)) {
         continue;
       }
-      // Извлекаем первый набор совпадений
-      if (!empty($matches[0])) {
-        $matches = $matches[0];
-      }
     }
 
     // Аутентификация и инициализация $request['user'].
     if (isset($r['auth'])) {
-      $auth_file = $r['auth'] . '.php';
-      if (file_exists($auth_file)) {
-        require_once($auth_file);
-        $auth = auth($request, $r);
-        if ($auth) {
-          // Аутентификация вернула заголовки 401.
-          return $auth;
-        }
+      require_once($r['auth'] . '.php');
+      $auth = auth($request, $r);
+      if ($auth) {
+        // Аутентификация вернула заголовки 401.
+        return $auth;
       }
     }
 
@@ -65,43 +55,27 @@ function init($request = array(), $urlconf = array()) {
     if (!isset($r['module'])) {
       continue;
     }
-    $module_file = $r['module'] . '.php';
-    if (file_exists($module_file)) {
-      require_once($module_file);
-    } else {
-      continue;
-    }
-    
+    require_once($r['module'] . '.php');
     // Собираем имя функции из имени модуля и метода запроса.
     $func = sprintf('%s_%s', $r['module'], $method);
     if (!function_exists($func)) {
       continue;
     }
 
-    // Собираем параметры в массив для передачи в функцию.
-    // Первый параметр всегда $request
-    $args = array($request);
-    
-    // Добавляем остальные параметры из совпадений регулярного выражения
-    if (!empty($matches) && is_array($matches)) {
-      // Пропускаем первый элемент, если это полное совпадение
-      foreach ($matches as $key => $match) {
-        if ($key === 0 && $url != '' && $url[0] == '/') {
-          // Для регулярных выражений первый элемент - полное совпадение, пропускаем
-          continue;
-        }
-        if (is_array($match)) {
-          $args[] = $match[0];
-        } else {
-          $args[] = $match;
-        }
+    // Собираем параметры в массив.
+    $params = array('request' => $request);
+    // Исправление: обрабатываем matches правильно
+    if (!empty($matches)) {
+      // Берем первый набор совпадений
+      $match = $matches[0];
+      // Пропускаем первый элемент (полное совпадение)
+      for ($i = 1; $i < count($match); $i++) {
+        $params[] = $match[$i];
       }
     }
 
-    // Вызываем обработчик запроса в модуле
-    $result = call_user_func_array($func, $args);
-    
-    if ($result) {
+    // Вызываем обработчик запроса в модуле передавая параметры из $params.
+    if ($result = call_user_func_array($func, $params)) {
       if (is_array($result)) {
         $response = array_merge($response, $result);
         // Первый модуль отработал запрос и выставил редирект или not found или forbidden.
@@ -145,7 +119,7 @@ function url($addr = '', $params = array()) {
   if ($addr == '' && isset($_GET['q'])) {
     $addr = strip_tags($_GET['q']);
   }
-  // В зависимости от настроек проекта генерируем чистые ссылки или ссылки с параметром.
+  // В зависимоти от настроек проекта генерируем чистые ссылки или ссылки с параметром.
   $clean = conf('clean_urls');
   $r = $clean ? '/' : '?q=';
   $r .= strip_tags($addr);
@@ -191,7 +165,7 @@ function theme($t, $c = array()) {
 
   // Если нет файла шаблона, то просто печатаем данные слитно.
   if (!file_exists($template)) {
-    return implode('', is_array($c) ? $c : array());
+    return implode('', $c);
   }
 
   // Начинаем буферизацию вывода.
