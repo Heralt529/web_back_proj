@@ -63,7 +63,7 @@ function init($request = array(), $urlconf = array()) {
     }
 
     // Собираем параметры в массив.
-    $params = array('request' => $request);
+    $params = array($request);
     // Исправление: обрабатываем matches правильно
     if (!empty($matches)) {
       // Берем первый набор совпадений
@@ -165,7 +165,25 @@ function theme($t, $c = array()) {
 
   // Если нет файла шаблона, то просто печатаем данные слитно.
   if (!file_exists($template)) {
-    return implode('', $c);
+    // Рекурсивно преобразуем все массивы в строки
+    $output = '';
+    foreach ($c as $key => $value) {
+      if (is_string($value)) {
+        $output .= $value;
+      } elseif (is_array($value)) {
+        // Если это массив с контентом (#content)
+        if ($key === '#content') {
+          foreach ($value as $content) {
+            if (is_string($content)) {
+              $output .= $content;
+            }
+          }
+        } else {
+          $output .= print_r($value, true);
+        }
+      }
+    }
+    return $output;
   }
 
   // Начинаем буферизацию вывода.
