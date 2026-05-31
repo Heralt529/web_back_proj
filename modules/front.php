@@ -2,252 +2,308 @@
 
 // Обработчик запросов методом GET.
 function front_get($request) {
-  // Возвращаем HTML-контент вместо массива
-  return '<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новогодние мероприятия</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        ' . file_get_contents('style.css') . '
-    </style>
-</head>
-<body>
-    <header class="header">
-        <div class="video-background">
-            <video autoplay muted loop playsinline>
-                <source src="video.mp4" type="video/mp4">
-                Видео не поддерживается в вашем браузере
-            </video>
-            <div class="video-overlay"></div>
-        </div>
-
-        <nav class="nav">
-            <a href="#" class="logo">НОВОГОДНИЕ ПРАЗДНИКИ и МЕРОПРИЯТИЯ</a>
-            
-            <ul class="nav-links">
-                <li><a href="#home">Главная</a></li>
-                <li>
-                    <a href="#projects">Проекты</a>
-                    <div class="dropdown-menu">
-                        <a href="#project-5">Утренники</a>
-                        <a href="#project-2">Корпоративы</a>
-                        <a href="#project-3">Квесты</a>
-                        <a href="#project-1">Мастер-классы</a>
-                        <a href="#project-4">Балы и концерты</a>
-                    </div>
-                </li>
-                <li><a href="#slider">Архив мероприятий</a></li>
-                <li><a href="#form">Контакты</a></li>
-            </ul>
-            
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-        </nav>
-
-        <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
-        <div class="mobile-menu" id="mobileMenu">
-            <button class="mobile-menu-close" id="mobileMenuClose">
-                <i class="fas fa-times"></i>
-            </button>
-            <ul class="mobile-menu-links">
-                <li><a href="#home">Главная</a></li>
-                <li><a href="#projects">Проекты</a></li>
-                <li><a href="#slider">Архив</a></li>
-                <li><a href="#form">Контакты</a></li>
-            </ul>
-        </div>
-        
-        <section class="hero" id="home">
-            <div class="hero-content">
-                <h1 style="color: crimson;">ОРГАНИЗАЦИЯ НОВОГОДНИХ МЕРОПРИЯТИЙ</h1>
-                <p style="text-shadow: 1px 1px 2px crimson, 0 0 1em black, 0 0 0.2em black;">Планирование и проведение новогодних праздников любого масштаба с профессиональной командой и современным оборудованием!</p>
-            </div>
-        </section>
-    </header>
-
-    <section class="projects" id="projects">
-        <div class="container">
-            <h2 class="section-title">Наши проекты</h2>
-            <div class="projects-grid">
-                <div class="projects-card" id="project-1">
-                    <div class="projects-icon">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <h3>Мастер-классы</h3>
-                    <p>Уроки рукоделия от мастеров своего дела</p>
-                </div>
-
-                <div class="projects-card" id="project-2">
-                    <div class="projects-icon">
-                        <i class="fas fa-beer"></i>
-                    </div>
-                    <h3>Корпоративы</h3>
-                    <p>Интересные конкурсы и необычные форматы помогут отдохнуть от рабочих будней</p>
-                </div>
-
-                <div class="projects-card" id="project-3">
-                    <div class="projects-icon">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
-                    <h3>Квесты</h3>
-                    <p>Интересные приключения с веселыми головоломками</p>
-                </div>
-
-                <div class="projects-card" id="project-4">
-                    <div class="projects-icon">
-                        <i class="fas fa-bell"></i>
-                    </div>
-                    <h3>Балы и концерты</h3>
-                    <p>Классика и новые форматы для культурного обогащения</p>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="projects-card" id="project-5">
-                <div class="projects-icon">
-                    <i class="fas fa-child"></i>
-                </div>
-                <h3>Утренники</h3>
-                <p>Веселый праздник для самых маленьких</p>
-            </div>
-        </div>        
-    </section>
-
-    <section class="slider-section" id="slider">
-        <div class="container">
-            <h2 class="section-title">Архив мероприятий</h2>
-            <div class="slider-container">
-                <div class="slider-wrapper">
-                    <div class="slider" id="jquery-slider">
-                        <div class="slide">
-                            <div class="slide-content">
-                                <img src="image1.png" alt="Концерт">
-                                <h3>Концерт в театре "Мастерская" г.Санкт-Петербург</h3>
-                                <p>Гости отлично провели время наслаждаясь композициями всемирно известных русских классиков</p>
-                                <p>Дата проведения: 30.12.2020</p>
-                            </div>
-                        </div>
-                        
-                        <div class="slide">
-                            <div class="slide-content">
-                                <img src="image2.png" alt="Мастер-класс">
-                                <h3>Мастер-класс по изготовлению украшений г.Краснодар</h3>
-                                <p>Студенты научились новому и наполнили коридоры вуза новогодним настроением</p>
-                                <p>Дата проведения: 15.12.2022</p>
-                            </div>
-                        </div>
-                        <div class="slide">
-                            <div class="slide-content">
-                                <img src="image3.png" alt="Утренник">
-                                <h3>Утренник в младшей школе Г.Анапа</h3>
-                                <p>Дата проведения: 29.12.2022</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slider-nav">
-                    <button class="slider-btn" id="prevBtn">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="slider-btn" id="nextBtn">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                
-                <div class="slider-dots" id="sliderDots"></div>
-            </div>
-        </div>
-    </section>  
-
-    <section class="form-section" id="form">
-        <div class="container">
-            <div class="form-container">
-                <h2 class="form-title">Оставить заявку</h2>
-                <div class="form-message" id="formMessage"></div>
-                <form id="contactForm">
-                    <div class="form-group">
-                        <label for="name">Ваше имя *</label>
-                        <input type="text" id="name" class="form-control" required placeholder="Имя Фамилия">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="phone">Телефон *</label>
-                        <input type="tel" id="phone" class="form-control" required placeholder="+7 (777) 777-77-77">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" class="form-control" required placeholder="email@gmail.com">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="message">Сообщение</label>
-                        <textarea id="message" class="form-control" rows="4" placeholder="Напишите ваше сообщение и мы обязательно его прочитаем"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn" style="width: 100%;" id="submitBtn">
-                        <span id="submitText">Отправить</span>
-                        <span id="submitSpinner" style="display: none;">
-                            <i class="fas fa-spinner fa-spin"></i> Отправка...
-                        </span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>НОВОГОДНИЕ МЕРОПРИЯТИЯ</h3>
-                    <p>Планирование и проведение новогодних праздников любого масштаба с профессиональной командой и современным оборудованием.</p>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Контакты</h3>
-                    <ul class="footer-links">
-                        <li><i class="fas fa-map-marker-alt"></i> г. Санкт-Петербург, ул. Новогодняя, 26</li>
-                        <li><i class="fas fa-phone"></i> +7 (918) 063-00-19</li>
-                        <li><i class="fas fa-envelope"></i> info@newYearProjects.ru</li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Ссылки</h3>
-                    <ul class="footer-links">
-                        <li><a href="#home">Главная</a></li>
-                        <li><a href="#projects">Проекты</a></li>
-                        <li><a href="#slider">Архив</a></li>
-                        <li><a href="#form">Контакты</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                <p>&copy; 2025 НОВОГОДНИЕ МЕРОПРИЯТИЯ. Абсолютно все права максимально защищены.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        ' . file_get_contents('script.js') . '
-    </script>
-</body>
-</html>';
+  // Возвращаем HTML-форму
+  ob_start();
+  ?>
+  <!DOCTYPE html>
+  <html lang="ru">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Новогодние мероприятия - Форма регистрации</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
+          
+          body {
+              font-family: 'Montserrat', sans-serif;
+              line-height: 1.6;
+              color: #333;
+              background-color: #ffce85;
+              padding: 40px 20px;
+          }
+          
+          .container {
+              width: 100%;
+              max-width: 800px;
+              margin: 0 auto;
+              padding: 0 15px;
+          }
+          
+          .form-container {
+              background-color: #fff;
+              border-radius: 8px;
+              padding: 40px;
+              box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+          }
+          
+          h1 {
+              text-align: center;
+              color: crimson;
+              margin-bottom: 30px;
+          }
+          
+          .form-group {
+              margin-bottom: 20px;
+          }
+          
+          .form-group label {
+              display: block;
+              margin-bottom: 8px;
+              font-weight: 500;
+          }
+          
+          .form-control {
+              width: 100%;
+              padding: 12px 15px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              font-family: 'Montserrat', sans-serif;
+              font-size: 16px;
+          }
+          
+          .form-control:focus {
+              outline: none;
+              border-color: #ff9900;
+          }
+          
+          .error-text {
+              color: red;
+              font-size: 14px;
+              margin-top: 5px;
+          }
+          
+          .success-text {
+              color: green;
+              font-size: 14px;
+              margin-top: 5px;
+          }
+          
+          .btn {
+              display: inline-block;
+              background-color: crimson;
+              color: #fff;
+              padding: 14px 30px;
+              border-radius: 30px;
+              text-decoration: none;
+              font-weight: 600;
+              transition: background-color 0.3s;
+              border: none;
+              cursor: pointer;
+              font-size: 16px;
+              width: 100%;
+          }
+          
+          .btn:hover {
+              background-color: #e68a00;
+          }
+          
+          .radio-group {
+              display: flex;
+              gap: 20px;
+              margin-top: 10px;
+          }
+          
+          .radio-group label {
+              display: flex;
+              align-items: center;
+              gap: 5px;
+          }
+          
+          .radio-group input {
+              width: auto;
+          }
+          
+          .checkbox-group {
+              margin-top: 10px;
+          }
+          
+          .checkbox-group label {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+          }
+          
+          .checkbox-group input {
+              width: auto;
+          }
+          
+          fieldset {
+              border: 1px solid #ddd;
+              padding: 15px;
+              border-radius: 4px;
+              margin-bottom: 20px;
+          }
+          
+          legend {
+              padding: 0 10px;
+              font-weight: 500;
+          }
+          
+          .message {
+              padding: 15px;
+              border-radius: 4px;
+              margin-bottom: 20px;
+              text-align: center;
+          }
+          
+          .message.success {
+              background-color: #d4edda;
+              color: #155724;
+          }
+          
+          .message.error {
+              background-color: #f8d7da;
+              color: #721c24;
+          }
+          
+          .message.info {
+              background-color: #d1ecf1;
+              color: #0c5460;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="form-container">
+              <h1>Регистрация на новогодние мероприятия</h1>
+              
+              <?php
+              // Выводим сообщения из cookies если есть
+              if (!empty($_COOKIE['save'])) {
+                  echo '<div class="message success">Результаты сохранены.</div>';
+                  if (!empty($_COOKIE['login']) && !empty($_COOKIE['pass'])) {
+                      echo '<div class="message info">Можно войти с логином <strong>' . htmlspecialchars($_COOKIE['login']) . '</strong> и паролем <strong>' . htmlspecialchars($_COOKIE['pass']) . '</strong></div>';
+                  }
+                  setcookie('save', '', time() - 3600);
+                  setcookie('login', '', time() - 3600);
+                  setcookie('pass', '', time() - 3600);
+              }
+              
+              // Выводим ошибки
+              $error_fields = ['name', 'phone', 'email', 'birthdate', 'sex', 'languages', 'contract'];
+              foreach ($error_fields as $field) {
+                  if (!empty($_COOKIE[$field . '_error'])) {
+                      echo '<div class="message error">' . getErrorMessage($field) . '</div>';
+                      setcookie($field . '_error', '', time() - 3600);
+                  }
+              }
+              
+              // Восстанавливаем значения
+              $values = [
+                  'name' => $_COOKIE['name_value'] ?? '',
+                  'phone' => $_COOKIE['phone_value'] ?? '',
+                  'email' => $_COOKIE['email_value'] ?? '',
+                  'birthdate' => $_COOKIE['birthdate_value'] ?? '',
+                  'sex' => $_COOKIE['sex_value'] ?? '',
+                  'languages' => isset($_COOKIE['languages_value']) ? explode('|', $_COOKIE['languages_value']) : [],
+                  'contract' => $_COOKIE['contract_value'] ?? '',
+                  'biography' => $_COOKIE['biography_value'] ?? ''
+              ];
+              ?>
+              
+              <form action="" method="POST" id="mainForm">
+                  <div class="form-group">
+                      <label for="name">ФИО *</label>
+                      <input type="text" id="name" name="name" class="form-control" value="<?php echo htmlspecialchars($values['name']); ?>" required>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="phone">Телефон</label>
+                      <input type="tel" id="phone" name="phone" class="form-control" value="<?php echo htmlspecialchars($values['phone']); ?>">
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="email">Email</label>
+                      <input type="email" id="email" name="email" class="form-control" value="<?php echo htmlspecialchars($values['email']); ?>">
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="birthdate">Дата рождения</label>
+                      <input type="date" id="birthdate" name="birthdate" class="form-control" value="<?php echo htmlspecialchars($values['birthdate']); ?>">
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>Пол *</label>
+                      <div class="radio-group">
+                          <label>
+                              <input type="radio" name="sex" value="male" <?php echo $values['sex'] == 'male' ? 'checked' : ''; ?>> Мужской
+                          </label>
+                          <label>
+                              <input type="radio" name="sex" value="female" <?php echo $values['sex'] == 'female' ? 'checked' : ''; ?>> Женский
+                          </label>
+                      </div>
+                  </div>
+                  
+                  <fieldset>
+                      <legend>Любимые языки программирования *</legend>
+                      <?php
+                      $all_languages = ['Pascal', 'C', 'C++', 'JavaScript', 'PHP', 'Python', 'Java', 'Haskel', 'Clojure', 'Prolog', 'Scala', 'Go'];
+                      foreach ($all_languages as $lang) {
+                          $checked = in_array($lang, $values['languages']) ? 'checked' : '';
+                          echo '<div class="checkbox-group">';
+                          echo '<label>';
+                          echo '<input type="checkbox" name="languages[]" value="' . htmlspecialchars($lang) . '" ' . $checked . '> ' . htmlspecialchars($lang);
+                          echo '</label>';
+                          echo '</div>';
+                      }
+                      ?>
+                  </fieldset>
+                  
+                  <div class="form-group">
+                      <label for="biography">Биография</label>
+                      <textarea id="biography" name="biography" class="form-control" rows="5"><?php echo htmlspecialchars($values['biography']); ?></textarea>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>
+                          <input type="checkbox" name="contract" value="1" <?php echo $values['contract'] == '1' ? 'checked' : ''; ?>> Ознакомлен с условиями *
+                      </label>
+                  </div>
+                  
+                  <button type="submit" class="btn">Отправить</button>
+              </form>
+          </div>
+      </div>
+      
+      <script>
+          // Убираем сообщения через 5 секунд
+          setTimeout(function() {
+              const messages = document.querySelectorAll('.message');
+              messages.forEach(msg => {
+                  msg.style.display = 'none';
+              });
+          }, 5000);
+      </script>
+  </body>
+  </html>
+  <?php
+  return ob_get_clean();
 }
 
-// Обработчик запросов методом POST (фоллбек для отключенного JS)
+// Обработчик запросов методом POST (фоллбек без JS)
 function front_post($request) {
-  // Возвращаем ту же страницу с сообщением
-  return front_get($request);
+  // Здесь будет логика сохранения данных
+  // Пока просто редирект обратно
+  return redirect('');
+}
+
+function getErrorMessage($field) {
+  $messages = [
+      'name' => 'Введите корректное имя.',
+      'phone' => 'Введите корректный номер телефона.',
+      'email' => 'Введите корректный email.',
+      'birthdate' => 'Введите корректную дату рождения.',
+      'sex' => 'Выберите пол.',
+      'languages' => 'Выберите хотя бы один язык программирования.',
+      'contract' => 'Подтвердите ознакомление с условиями.'
+  ];
+  return $messages[$field] ?? 'Неизвестная ошибка.';
 }
