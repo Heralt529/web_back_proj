@@ -1,154 +1,258 @@
 <?php
+
+// Обработчик запросов методом GET.
 function front_get($request) {
-    // Получить значения из кук (как в index_old.php)
-    $values = [];
-    $errors = [];
-    $messages = [];
-
-    if (!empty($_COOKIE['save'])) {
-        $messages[] = 'Результаты сохранены.';
-        if (!empty($_COOKIE['login']) && !empty($_COOKIE['pass'])) {
-            $messages[] = sprintf('Логин: %s, пароль: %s', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass']));
-        }
-        setcookie('save', '', 100000);
-        setcookie('login', '', 100000);
-        setcookie('pass', '', 100000);
-    }
-
-    $error_fields = ['name', 'phone', 'email', 'birthdate', 'sex', 'languages', 'contract'];
-    foreach ($error_fields as $field) {
-        $errors[$field] = !empty($_COOKIE[$field . '_error']);
-        if ($errors[$field]) {
-            setcookie($field . '_error', '', 100000);
-        }
-    }
-
-    $values['name'] = empty($_COOKIE['name_value']) ? '' : strip_tags($_COOKIE['name_value']);
-    $values['phone'] = empty($_COOKIE['phone_value']) ? '' : strip_tags($_COOKIE['phone_value']);
-    $values['email'] = empty($_COOKIE['email_value']) ? '' : strip_tags($_COOKIE['email_value']);
-    $values['birthdate'] = empty($_COOKIE['birthdate_value']) ? '' : strip_tags($_COOKIE['birthdate_value']);
-    $values['sex'] = empty($_COOKIE['sex_value']) ? '' : strip_tags($_COOKIE['sex_value']);
-    $values['languages'] = empty($_COOKIE['languages_value']) ? [] : explode('|', strip_tags($_COOKIE['languages_value']));
-    $values['contract'] = empty($_COOKIE['contract_value']) ? '' : strip_tags($_COOKIE['contract_value']);
-
-    // очистить куки значений
-    setcookie('name_value', '', 100000);
-    setcookie('phone_value', '', 100000);
-    setcookie('email_value', '', 100000);
-    setcookie('birthdate_value', '', 100000);
-    setcookie('sex_value', '', 100000);
-    setcookie('languages_value', '', 100000);
-    setcookie('contract_value', '', 100000);
-
-    return theme('form', ['values' => $values, 'errors' => $errors, 'messages' => $messages]);
+  // Проверяем, есть ли cookies с данными формы
+  $form_data = array();
+  $errors = array();
+  $message = '';
+  
+  // Восстанавливаем данные из cookies если есть
+  if (isset($_COOKIE['form_data'])) {
+    $form_data = json_decode($_COOKIE['form_data'], true);
+    setcookie('form_data', '', time() - 3600);
+  }
+  
+  if (isset($_COOKIE['form_errors'])) {
+    $errors = json_decode($_COOKIE['form_errors'], true);
+    setcookie('form_errors', '', time() - 3600);
+  }
+  
+  if (isset($_COOKIE['form_message'])) {
+    $message = $_COOKIE['form_message'];
+    setcookie('form_message', '', time() - 3600);
+  }
+  
+  if (isset($_COOKIE['login'])) {
+    $message .= ' Сохранено. Логин: ' . $_COOKIE['login'] . ', Пароль: ' . $_COOKIE['pass'];
+    setcookie('login', '', time() - 3600);
+    setcookie('pass', '', time() - 3600);
+  }
+  
+  // Просто возвращаем HTML форму
+  ob_start();
+  ?>
+  <!DOCTYPE html>
+  <html lang="ru">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Регистрационная форма</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
+          body {
+              font-family: 'Montserrat', sans-serif;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              min-height: 100vh;
+              padding: 40px 20px;
+          }
+          .container {
+              max-width: 800px;
+              margin: 0 auto;
+          }
+          .form-container {
+              background: white;
+              border-radius: 10px;
+              padding: 40px;
+              box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+          }
+          h1 {
+              text-align: center;
+              color: #333;
+              margin-bottom: 30px;
+          }
+          .form-group {
+              margin-bottom: 20px;
+          }
+          label {
+              display: block;
+              margin-bottom: 5px;
+              font-weight: 500;
+              color: #555;
+          }
+          .form-control {
+              width: 100%;
+              padding: 10px;
+              border: 1px solid #ddd;
+              border-radius: 5px;
+              font-size: 16px;
+          }
+          .form-control.error {
+              border-color: red;
+          }
+          .error-text {
+              color: red;
+              font-size: 12px;
+              margin-top: 5px;
+          }
+          .success-text {
+              color: green;
+              font-size: 12px;
+              margin-top: 5px;
+          }
+          fieldset {
+              border: 1px solid #ddd;
+              padding: 15px;
+              margin-bottom: 20px;
+              border-radius: 5px;
+          }
+          legend {
+              padding: 0 10px;
+              font-weight: 500;
+          }
+          .checkbox-group {
+              margin-bottom: 10px;
+          }
+          .checkbox-group input {
+              margin-right: 10px;
+          }
+          .btn {
+              background: #667eea;
+              color: white;
+              padding: 12px 30px;
+              border: none;
+              border-radius: 5px;
+              font-size: 16px;
+              cursor: pointer;
+              width: 100%;
+          }
+          .btn:hover {
+              background: #5a67d8;
+          }
+          .message {
+              padding: 10px;
+              margin-bottom: 20px;
+              border-radius: 5px;
+          }
+          .message.success {
+              background: #d4edda;
+              color: #155724;
+              border: 1px solid #c3e6cb;
+          }
+          .message.error {
+              background: #f8d7da;
+              color: #721c24;
+              border: 1px solid #f5c6cb;
+          }
+          @media (max-width: 768px) {
+              .form-container {
+                  padding: 20px;
+              }
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="form-container">
+              <h1>Регистрационная форма</h1>
+              
+              <?php if ($message): ?>
+                  <div class="message success"><?php echo htmlspecialchars($message); ?></div>
+              <?php endif; ?>
+              
+              <form action="" method="POST" id="mainForm">
+                  <div class="form-group">
+                      <label>ФИО *</label>
+                      <input type="text" name="name" class="form-control <?php echo isset($errors['name']) ? 'error' : ''; ?>" 
+                             value="<?php echo htmlspecialchars($form_data['name'] ?? ''); ?>">
+                      <?php if (isset($errors['name'])): ?>
+                          <div class="error-text"><?php echo $errors['name']; ?></div>
+                      <?php endif; ?>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>Телефон</label>
+                      <input type="tel" name="phone" class="form-control <?php echo isset($errors['phone']) ? 'error' : ''; ?>" 
+                             value="<?php echo htmlspecialchars($form_data['phone'] ?? ''); ?>">
+                      <?php if (isset($errors['phone'])): ?>
+                          <div class="error-text"><?php echo $errors['phone']; ?></div>
+                      <?php endif; ?>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>Email</label>
+                      <input type="email" name="email" class="form-control <?php echo isset($errors['email']) ? 'error' : ''; ?>" 
+                             value="<?php echo htmlspecialchars($form_data['email'] ?? ''); ?>">
+                      <?php if (isset($errors['email'])): ?>
+                          <div class="error-text"><?php echo $errors['email']; ?></div>
+                      <?php endif; ?>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>Дата рождения</label>
+                      <input type="date" name="birthdate" class="form-control <?php echo isset($errors['birthdate']) ? 'error' : ''; ?>" 
+                             value="<?php echo htmlspecialchars($form_data['birthdate'] ?? ''); ?>">
+                      <?php if (isset($errors['birthdate'])): ?>
+                          <div class="error-text"><?php echo $errors['birthdate']; ?></div>
+                      <?php endif; ?>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>Пол *</label>
+                      <div>
+                          <label><input type="radio" name="sex" value="male" <?php echo (isset($form_data['sex']) && $form_data['sex'] == 'male') ? 'checked' : ''; ?>> Мужской</label>
+                          <label><input type="radio" name="sex" value="female" <?php echo (isset($form_data['sex']) && $form_data['sex'] == 'female') ? 'checked' : ''; ?>> Женский</label>
+                      </div>
+                      <?php if (isset($errors['sex'])): ?>
+                          <div class="error-text"><?php echo $errors['sex']; ?></div>
+                      <?php endif; ?>
+                  </div>
+                  
+                  <fieldset>
+                      <legend>Любимые языки программирования *</legend>
+                      <?php
+                      $languages = ['Pascal', 'C', 'C++', 'JavaScript', 'PHP', 'Python', 'Java', 'Haskel', 'Clojure', 'Prolog', 'Scala', 'Go'];
+                      $selected_langs = isset($form_data['languages']) ? (array)$form_data['languages'] : [];
+                      foreach ($languages as $lang):
+                      ?>
+                          <div class="checkbox-group">
+                              <label>
+                                  <input type="checkbox" name="languages[]" value="<?php echo $lang; ?>" 
+                                         <?php echo in_array($lang, $selected_langs) ? 'checked' : ''; ?>>
+                                  <?php echo $lang; ?>
+                              </label>
+                          </div>
+                      <?php endforeach; ?>
+                      <?php if (isset($errors['languages'])): ?>
+                          <div class="error-text"><?php echo $errors['languages']; ?></div>
+                      <?php endif; ?>
+                  </fieldset>
+                  
+                  <div class="form-group">
+                      <label>Биография</label>
+                      <textarea name="biography" class="form-control" rows="4"><?php echo htmlspecialchars($form_data['biography'] ?? ''); ?></textarea>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>
+                          <input type="checkbox" name="contract" value="1" <?php echo (isset($form_data['contract']) && $form_data['contract'] == '1') ? 'checked' : ''; ?>>
+                          Я ознакомлен с условиями *
+                      </label>
+                      <?php if (isset($errors['contract'])): ?>
+                          <div class="error-text"><?php echo $errors['contract']; ?></div>
+                      <?php endif; ?>
+                  </div>
+                  
+                  <button type="submit" class="btn">Отправить</button>
+              </form>
+          </div>
+      </div>
+  </body>
+  </html>
+  <?php
+  return ob_get_clean();
 }
 
+// Обработчик запросов методом POST.
 function front_post($request) {
-    // Обработка обычной отправки формы (без JS)
-    $errors = false;
-
-    if (empty($_POST['name'])) {
-        setcookie('name_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } elseif (strlen($_POST['name']) > 150) {
-        setcookie('name_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } elseif (!preg_match('/^[a-zA-Zа-яА-ЯёЁ\s]+$/u', $_POST['name'])) {
-        setcookie('name_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } else {
-        setcookie('name_value', $_POST['name'], time() + 30 * 24 * 60 * 60);
-    }
-
-    if (!empty($_POST['phone']) && !preg_match('/^[\+0-9\s\-\(\)]{10,20}$/', $_POST['phone'])) {
-        setcookie('phone_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } else {
-        setcookie('phone_value', $_POST['phone'], time() + 30 * 24 * 60 * 60);
-    }
-
-    if (!empty($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        setcookie('email_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } else {
-        setcookie('email_value', $_POST['email'], time() + 30 * 24 * 60 * 60);
-    }
-
-    if (!empty($_POST['birthdate'])) {
-        $date = DateTime::createFromFormat('Y-m-d', $_POST['birthdate']);
-        if (!$date || $date->format('Y-m-d') !== $_POST['birthdate']) {
-            setcookie('birthdate_error', '1', time() + 24 * 60 * 60);
-            $errors = true;
-        } else {
-            setcookie('birthdate_value', $_POST['birthdate'], time() + 30 * 24 * 60 * 60);
-        }
-    }
-
-    $allowed_genders = ['male', 'female'];
-    if (empty($_POST['sex'])) {
-        setcookie('sex_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } elseif (!in_array($_POST['sex'], $allowed_genders)) {
-        setcookie('sex_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } else {
-        setcookie('sex_value', $_POST['sex'], time() + 30 * 24 * 60 * 60);
-    }
-
-    $allowed_languages = ['Pascal', 'C', 'C++', 'JavaScript', 'PHP', 'Python', 'Java', 'Haskel', 'Clojure', 'Prolog', 'Scala', 'Go'];
-    if (empty($_POST['languages'])) {
-        setcookie('languages_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } else {
-        $lang_valid = true;
-        foreach ($_POST['languages'] as $lang) {
-            if (!in_array($lang, $allowed_languages)) {
-                $lang_valid = false;
-                break;
-            }
-        }
-        if (!$lang_valid) {
-            setcookie('languages_error', '1', time() + 24 * 60 * 60);
-            $errors = true;
-        } else {
-            setcookie('languages_value', implode('|', $_POST['languages']), time() + 30 * 24 * 60 * 60);
-        }
-    }
-
-    if (empty($_POST['contract']) || $_POST['contract'] != '1') {
-        setcookie('contract_error', '1', time() + 24 * 60 * 60);
-        $errors = true;
-    } else {
-        setcookie('contract_value', '1', time() + 30 * 24 * 60 * 60);
-    }
-
-    if ($errors) {
-        header('Location: /');
-        exit();
-    }
-
-    // Очистка ошибок
-    $error_cookies = ['name', 'phone', 'email', 'birthdate', 'sex', 'languages', 'contract'];
-    foreach ($error_cookies as $field) {
-        setcookie($field . '_error', '', 100000);
-    }
-
-    // Сохраняем данные
-    $data = [
-        'name' => $_POST['name'],
-        'phone' => $_POST['phone'] ?? null,
-        'email' => $_POST['email'] ?? null,
-        'birthdate' => $_POST['birthdate'] ?? null,
-        'sex' => $_POST['sex'],
-        'languages' => $_POST['languages'],
-        'biography' => $_POST['biography'] ?? null,
-        'contract' => $_POST['contract']
-    ];
-    require_once('includes/functions.php');
-    $user = create_user($data);
-    setcookie('save', '1');
-    setcookie('login', $user['login']);
-    setcookie('pass', $user['password']);
-    header('Location: /');
-    exit();
+  // Здесь будет обработка формы при выключенном JS
+  return redirect('');
 }
